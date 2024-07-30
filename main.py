@@ -11,8 +11,8 @@ URL = "https://appbrewery.github.io/instant_pot/"
 response = requests.get(URL)
 contents = response.text
 
-my_email = "sultankwt331@gmail.com"
-password = "gzeyegedlshtpqah"
+my_email = os.environ["EMAIL_ADDRESS"]
+password = os.environ["EMAIL_PASSWORD"]
 
 soup = BeautifulSoup(contents, "html.parser")
 price = soup.find(name="span", class_="aok-offscreen").get_text()
@@ -30,9 +30,9 @@ if price_without_symbol < 100:
     
     with smtplib.SMTP("smtp.gmail.com", port=587) as connection:
         connection.starttls()
-        result = connection.login(os.environ["EMAIL_ADDRESS"], os.environ["EMAIL_PASSWORD"])
+        result = connection.login(my_email, password)
         connection.sendmail(
-            from_addr=os.environ["EMAIL_ADDRESS"],
-            to_addrs=os.environ["EMAIL_ADDRESS"],
+            from_addr=my_email,
+            to_addrs=my_email,
             msg=f"Subject:W price Alert!\n\n{item_title} is now ${price_without_symbol}\n{URL}".encode("utf-8")
         )
